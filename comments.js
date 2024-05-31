@@ -1,38 +1,56 @@
 // Create Web Server
-// 1. Create a web server using Express
-// 2. Create a route for POST /comments
-// 3. Parse the incoming JSON data
-// 4. Store the incoming JSON data in an array
-// 5. Respond with the stored data
-// 6. Start the server and listen on port 3000
-// 7. Test the route using Postman
-
 const express = require('express');
 const app = express();
 const port = 3000;
 
-app.use(express.json());
+// Require the comments module
+const comments = require('./comments');
 
-let comments = [];
+// Use the comments module
+app.use('/comments', comments);
 
-app.post('/comments', (req, res) => {
-    let newComment = req.body;
-    comments.push(newComment);
-    res.json(comments);
-});
-
+// Start the server
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+  console.log(`Server is running on http://localhost:${port}`);
 });
 
-// Test the route using Postman
-// 1. Open Postman
-// 2. Select POST method
-// 3. Enter http://localhost:3000/comments
-// 4. Select Body
-// 5. Select raw
-// 6. Select JSON
-// 7. Enter the following JSON data
-// {
-//     "name": "Alice",
-//     "email": "
+// Path: comments.js
+// Create a new router
+const express = require('express');
+const router = express.Router();
+
+// Define the route for getting all comments
+router.get('/', (req, res) => {
+  res.json(comments);
+});
+
+// Define the route for getting a single comment
+router.get('/:id', (req, res) => {
+  const comment = comments.find((c) => c.id === parseInt(req.params.id));
+  if (!comment) {
+    return res.status(404).send('The comment with the given ID was not found.');
+  }
+  res.json(comment);
+});
+
+// Export the router
+module.exports = router;
+
+// Path: comments.js
+// Create an array of comments
+const comments = [
+  { id: 1, author: 'John Doe', body: 'Hello, World!' },
+  { id: 2, author: 'Jane Doe', body: 'Hi, there!' },
+  { id: 3, author: 'Alice', body: 'Howdy!' },
+];
+
+// Export the comments array
+module.exports = comments;
+
+// Path: comments.js
+// Create a new comment
+router.post('/', (req, res) => {
+    const comment = {
+        id: comments.length + 1,
+    };
+}); // Add the missing closing curly brace here
