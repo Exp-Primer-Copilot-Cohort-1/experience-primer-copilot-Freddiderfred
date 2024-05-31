@@ -1,65 +1,38 @@
-//Create Web Server
-var express = require('express');
-var app = express();
-var bodyParser = require('body-parser');
-var fs = require('fs');
+// Create Web Server
+// 1. Create a web server using Express
+// 2. Create a route for POST /comments
+// 3. Parse the incoming JSON data
+// 4. Store the incoming JSON data in an array
+// 5. Respond with the stored data
+// 6. Start the server and listen on port 3000
+// 7. Test the route using Postman
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+const express = require('express');
+const app = express();
+const port = 3000;
 
-app.post('/comments', function(req, res) {
-    var comment = req.body.comment;
-    console.log(comment);
-    fs.appendFile('comments.txt', comment + '\n', function(err) {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Error saving your comment');
-        } else {
-            res.status(200).send('Comment saved');
-        }
-    });
+app.use(express.json());
+
+let comments = [];
+
+app.post('/comments', (req, res) => {
+    let newComment = req.body;
+    comments.push(newComment);
+    res.json(comments);
 });
 
-app.get('/comments', function(req, res) {
-    fs.readFile('comments.txt', 'utf8', function(err, data) {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Error reading comments');
-        } else {
-            res.status(200).send(data);
-        }
-    });
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
 });
 
-app.listen(3000, function() {
-    console.log('Server started');
-});
-//Run the server with node comments.js
-//To test the server, you can use curl or Postman, or you can use the following HTML form:
-/*
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Comments</title>
-</head>
-<body>
-    <form action="http://localhost:3000/comments" method="POST">
-        <textarea name="comment"></textarea>
-        <button type="submit">Submit</button>
-    </form>
-    <script>
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'http://localhost:3000/comments', true);
-        xhr.send();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                document.body.innerHTML += '<pre>' + xhr.responseText + '</pre>';
-            }
-        };
-    </script>
-</body>
-</html>
-*/
-//Save this code as comments.html and open it in your browser. You can submit comments and see them displayed on the page. 
-//The comments are also saved to the comments.txt file. 
-//You can open this file to see the comments that have been submitted to the server.
+// Test the route using Postman
+// 1. Open Postman
+// 2. Select POST method
+// 3. Enter http://localhost:3000/comments
+// 4. Select Body
+// 5. Select raw
+// 6. Select JSON
+// 7. Enter the following JSON data
+// {
+//     "name": "Alice",
+//     "email": "
